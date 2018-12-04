@@ -21,7 +21,8 @@ levels(air$room_type)
 air$EntirePlace = ifelse(air$room_type == "Entire home/apt",1,0)
 air$PrivateRoom = ifelse(air$room_type == "Private room",1,0)
 air$SharedRoom = ifelse(air$room_type == "Shared room",1,0)
-air = air[,-c(22)]
+air = air[,-c(22)] #remove room_type column
+table(air$EntirePlace)
 
 # Dummy for Response Time
 levels(air$host_response_time)
@@ -30,7 +31,7 @@ air$Respond_fewDaysOrMore = ifelse(air$host_response_time == "a few days of more
 air$Respond_WithinDay = ifelse(air$host_response_time== "within a day",1,0)
 air$Respond_WithinFewHours = ifelse(air$host_response_time == "within a few hours",1,0)
 air$Respond_WithinTheHour = ifelse(air$host_response_time == "within an hour",1,0)
-air = air[,-c(10)]
+air = air[,-c(10)] # remove host_response_time column
 
 #Dummy for Property Type
 levels(air$property_type)
@@ -43,7 +44,7 @@ air$Loft = ifelse(air$property_type == "Loft",1,0)
 air$Other = ifelse(air$property_type == "Other",1,0)
 air$ServicedApartment = ifelse(air$property_type == "Serviced apartment",1,0)
 air$Townhouse = ifelse(air$property_type == "Townhouse",1,0)
-air = air[,-c(20)]
+air = air[,-c(20)] # remove property_type 
 
 # Dummy for Bed Type
 levels(air$bed_type)
@@ -52,22 +53,22 @@ air$Bed_Couch = ifelse(air$bed_type == "Couch",1,0)
 air$Bed_Futon = ifelse(air$bed_type == "Futon",1,0)
 air$Bed_PullOutSofa = ifelse(air$bed_type == "Pull-out Sofa",1,0)
 air$Bed_Bed = ifelse(air$bed_type == "Real Bed",1,0)
-air = air[,-c(24)]
+air = air[,-c(24)] # remove bed_type variable
 
 # Dummy for Cancellation Policy
 levels(air$cancellation_policy)
 
-air$Cancel_Flexible = ifelse(air$cancellation_policy == "felxible",1,0)
+air$Cancel_Flexible = ifelse(air$cancellation_policy == "flexible",1,0)
 air$Cancel_Moderate = ifelse(air$cancellation_policy == "moderate",1,0)
 air$Cancel_Strict = ifelse(air$cancellation_policy == "strict_14_with_grace_period",1,0)
-air = air[,-c(50)]
+air = air[,-c(50)] # remove cancellation policy column
 
 # Dummy Variable for Space (if its filled out then 1, else 0)
 air$space = ifelse(air$space == "",0,1)
 
 # Dummy Variable for Description (if its filled out then 1, else 0)
-air$description = ifelse(air$description == "",0,1)
-air = air[,-c(3)] # they are all filled in so it doesnt matter
+#air$description = ifelse(air$description == "",0,1)
+#air = air[,-c(3)] # they are all filled in so it doesnt matter
 
 # Dummy Variable for Transit (if its filled out then 1, else 0)
 air$transit = ifelse(air$transit == "",0,1)
@@ -84,9 +85,9 @@ air$house_rules = ifelse(air$house_rules == "",0,1)
 # Dummy Variable for Host_About (if its filled out then 1, else 0)
 air$host_about = ifelse(air$host_about == "",0,1)
 
-
 ######################## Removing NA Values #########################
 # removing NAs in review_scores_rating
+table(is.na(air$review_scores_rating)) # 77 NA values 
 air = air[!is.na(air$review_scores_rating),]
 sum(is.na(air$review_scores_rating)) #check for 0 NAs
 
@@ -147,60 +148,75 @@ table(air$hasPrivateEnt)
 # Kitchen 
 air$hasKitchen = ifelse(grepl("Kitchen",air$amens),1,0)
 table(air$hasKitchen)
+# Family/kid friendly
+air$isFamilyFriendly = ifelse(grepl("Family/kid friendly",air$amens),1,0)
+table(air$isFamilyFriendly)
 
 # all unique amenities
+count=0
 uniques = function(){
-  amenities = vector()
-  for (i in length(air$amens)){
-   amenities_unique = air$amens[[i]]
+    amenities = vector()
+    for (i in 1:length(air$amens)){
+        for (j in 1:length(air$amens[[i]])){
+            amenities[count] = air$amens[[i]][[j]]
+        }
+        count = count+1
     }
     return(amenities)
-  }
+}
+
+amenities = uniques()
+unique(amenities)
   
-uniques()
-  
+# compare to sample means
+air$zipcode = as.numeric(air$zipcode)
+air$square_meter = air$square_feet*0.32048
+air$propertyPrice = ifelse( (air$zipcode == 75001), air$square_meter*10777,
+                           ifelse( (air$zipcode == 75002) , air$square_meter*9341),0)
 
+air$propertyPrice = ifelse(air$zipcode == 75001, air$square_meter*10777, 
+       ifelse(air$zipcode == 75002, air$square_meter*9341, 
+              ifelse(air$zipcode == 75003, air$square_meter*10296,
+                     ifelse(air$zipcode == 75004, air$square_meter*11655,
+                            ifelse(air$zipcode == 75005, air$square_meter*10828,
+                                   ifelse(air$zipcode == 75006, air$square_meter*12442,
+                                          ifelse(air$zipcode == 75007, air$square_meter*12171,
+                                                 ifelse(air$zipcode == 75008, air$square_meter*10762,
+                                                        ifelse(air$zipcode == 75009, air$square_meter*8682,
+                                                               ifelse(air$zipcode == 75010, air$square_meter*7718,
+                                                                      ifelse(air$zipcode == 75011, air$square_meter*8161,
+                                                                             ifelse(air$zipcode == 75012, air$square_meter*7724,
+                                                                                    ifelse(air$zipcode == 75013, air$square_meter*7770,
+                                                                                           ifelse(air$zipcode == 75014, air$square_meter*8368,
+                                                                                                  ifelse(air$zipcode == 75015, air$square_meter*8581,
+                                                                                                         ifelse(air$zipcode == 75016, air$square_meter*8851,
+                                                                                                                ifelse(air$zipcode == 75017, air$square_meter*8504,
+                                                                                                                       ifelse(air$zipcode == 75018, air$square_meter*7420,
+                                                                                                                              ifelse(air$zipcode == 75019, air$square_meter*6507,
+                                                                                                                                     ifelse(air$zipcode == 75020, air$square_meter*6792,0)
+                                                                                                                                     )
+                                                                                                                              )
+                                                                                                                       )
+                                                                                                                )
+                                                                                                         )
+                                                                                                  )
+                                                                                           )
+                                                                                    )
+                                                                             )
+                                                                      )
+                                                               )
+                                                        )
+                                                 )
+                                          )
+                                   )
+                            )
+                     )
+              
+       )
+)
 
-
+isZero = ifelse(air$propertyPrice == 0,air$zipcode,"NOT ZERO")
+table(isZero)
 write.csv(air, file = "CleanAirBnb.csv")
-
-
-
-######### splitting amenities #############
-
-# Remove {\"} from the amenitiies column
-air$amenities <- gsub("[{\\\"}]", "", air$amenities) #now the amenities column separated each amenity by a comma
-
-# Splitting the amenities column into columns for each amenity? This was we have a binary column for each.
-install.packages("qdapTools")
-library(qdapTools)
-
-one = as.data.frame(mtabulate(s[[1]]))
-two = as.data.frame(mtabulate(s[[2]]))
-mtabulate(s[[2]])
-
-#what are all of the unique amneities in all of the listings?
-uniques <- sapply(strsplit(air$amenities, ",", fixed = TRUE), function(x) 
-  paste(unique(x), collapse = ","))
-uniques
-
-amenities = as.data.frame(unique(unlist(air$amenities, use.names = FALSE)))
-
-library(sqldf)               
-sqldf("select distinct(amenities) from air")
-
-#one big list
-air2 = strsplit(as.character(air$amenities), ",")
-
-air2 = as.data.frame(air2)
-unique(air2)
-
-air3 = as.matrix(air2)
-
-
-#loop that adds the value of the row amenity if its unique
-
-benchmark = unique(air2[[1]])
-as.vector(benchmark)
 
 
