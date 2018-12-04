@@ -107,7 +107,46 @@ air$cleaning_fee = sub("^$", "$0.00", air$cleaning_fee) # adding 0s to blank cel
 air$amenities <- gsub("[{\\\"}]", "", air$amenities) #now the amenities column separated each amenity by a comma
 air$amens = strsplit(air$amenities,split=',', fixed=TRUE)
 air$amens = as.vector(air$amens)
+
+# TV dummy
 air$hasTV = ifelse(grepl("TV",air$amens),1,0)
+table(air$hasTV)
+# Internet 
+air$hasInternet = ifelse(grepl("Internet",air$amens),1,0)
+table(air$hasInternet)
+# Wifi
+air$hasWifi = ifelse(grepl("Wifi",air$amens),1,0)
+table(air$hasWifi)
+# Shampoo
+air$hasShampoo = ifelse(grepl("Shampoo",air$amens),1,0)
+table(air$hasShampoo)
+# Heat 
+air$hasHeat = ifelse(grepl("Heat",air$amens),1,0)
+table(air$hasHeat)
+# Air Conditioning 
+air$hasAC = ifelse(grepl("Air conditioning",air$amens),1,0)
+table(air$hasAC)
+# Breakfast 
+air$hasBreakfast = ifelse(grepl("Breakfast",air$amens),1,0)
+table(air$hasBreakfast)
+# Desk/workspace
+air$hasDesk = ifelse(grepl("workspace",air$amens),1,0)
+table(air$hasDesk)
+# Fireplace
+air$hasFireplace = ifelse(grepl("fireplace",air$amens),1,0)
+table(air$hasFireplace)
+# iron 
+air$hasIron = ifelse(grepl("Iron",air$amens),1,0)
+table(air$hasIron)
+# Hair dryer 
+air$hasHairDryer = ifelse(grepl("Hair dryer",air$amens),1,0)
+table(air$hasHairDryer)
+# Private entrance 
+air$hasPrivateEnt = ifelse(grepl("Private entrance",air$amens),1,0)
+table(air$hasPrivateEnt)
+# Kitchen 
+air$hasKitchen = ifelse(grepl("Kitchen",air$amens),1,0)
+table(air$hasKitchen)
 
 # all unique amenities
 uniques = function(){
@@ -164,4 +203,4 @@ air3 = as.matrix(air2)
 benchmark = unique(air2[[1]])
 as.vector(benchmark)
 
-function test =
+
