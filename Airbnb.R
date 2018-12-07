@@ -235,15 +235,6 @@ air$extra_people <- as.numeric(gsub("[$,]", "", air$extra_people))
 #making the income per month column
 air$IncomePerMonth = ((air$price*30)*air$occupancy_rate)
 
+#removing more variables that we wont be using
+air = air[,-c(1,6,11,13,15,19,24,33,34,35,36,37,39,40,50,51,52,54,79)]
 
-
-
-
-############ graphs ############
-
-# 1. creating a map of the locations in france
-map = google_map(key = "AIzaSyB7V1GRvLN_nfnocXtJb0gVAFl5g7nLKlE", location = "paris", zoom = 8)
-map
-
-library(ggmap)
-map = get_map(location = "Europe", zoom = 4)
