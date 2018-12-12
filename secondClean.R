@@ -1,5 +1,5 @@
 ################### Importing Partically Cleaned Data #############
-air = read.csv("Airbnb2.csv")
+air = read.csv("Airbnb.csv")
 air = air[,-c(1)] # Removing weird new variable
 
 ################## Updating Variable Structure ##############
@@ -171,7 +171,7 @@ unique(amenities)
 # Adding Property Price Column
 air$zipcode = as.numeric(air$zipcode) #turning the column to a numeric one
 
-air$square_meter = air$square_feet*0.32048 #creating square meter column
+air$square_meter = air$square_feet*0.092903 #creating square meter column
 
 air$propertyPrice = ifelse(air$zipcode == 75001, air$square_meter*10777, 
        ifelse(air$zipcode == 75002, air$square_meter*9341, 
