@@ -75,6 +75,7 @@ library(rpart.plot)
 #TODO: Overfit the tree with a low cp then trim it back
 importantVars = air[,c(2:9,19,22,24,26,28,29,31,32,33,35,34)]
 attach(importantVars)
+importantVars$cluster = as.factor(importantVars$cluster)
 
 # changing Property Types to a single factor variables
 importantVars$propertyType = ifelse(importantVars$EntirePlace == 1, "Entire Apartment", 
@@ -111,6 +112,9 @@ minMSE
 # optimal tree
 bestTree=rpart(IncomePerMonth~.,data=trainTree,control=rpart.control(cp=bestCP))
 rpart.plot(bestTree) # plot of the best tree 
+# short tree
+shortTree=rpart(IncomePerMonth~.,data=trainTree,control=rpart.control(cp=0.01))
+rpart.plot(shortTree)
 
 # calculating MAE for the decision tree
 treePredictions = data.frame(predict(bestTree,testTree))
@@ -151,17 +155,55 @@ attach(importantVars)
 fullForest = randomForest(IncomePerMonth~., ntree=500, data=importantVars, importance=TRUE, do.trace = 100)
 print(fullForest)
 
+importantVars1 = importantVars
+importantVars1$IncomePerMonth = (importantVars$IncomePerMonth / 1000)
+
+fullForest1 = randomForest(IncomePerMonth~., ntree=500, data=importantVars1, importance=TRUE, do.trace = 100)
+print(fullForest1)
+summary(importantVars1$IncomePerMonth)
+
+# Test Prediction
+tester = data.frame(zipcode = 75001, accommodates = 4, bathrooms = 2, bedrooms = 2, 
+                    beds = 2, hasTV = 0, hasShampoo = 1, hasAC = 1, hasDesk = 1, hasIron = 1, 
+                    hasHairDryer = 0, hasKitchen = 1, isFamilyFriendly = 1,square_meter = 200, 
+                    cluster = 1, propertyType = "Entire Apartment")
+
+tester$zipcode = as.factor(tester$zipcode)
+tester$hasTV = as.factor(tester$hasTV)
+tester$hasShampoo = as.factor(tester$hasShampoo)
+tester$hasAC = as.factor(tester$hasAC)
+tester$hasDesk = as.factor(tester$hasDesk)
+tester$hasIron = as.factor(tester$hasIron)
+tester$hasHairDryer = as.factor(tester$hasHairDryer)
+tester$hasKitchen = as.factor(tester$hasKitchen)
+tester$isFamilyFriendly = as.factor(tester$isFamilyFriendly)
+tester$cluster = as.factor(tester$cluster)
+tester$propertyType = as.factor(tester$propertyType)
+
+# fixing factor levels
+tester$zipcode <- factor(tester$zipcode, levels = levels(importantVars$zipcode))
+tester$hasTV <- factor(tester$hasTV, levels = levels(importantVars$hasTV))
+tester$hasShampoo <- factor(tester$hasShampoo, levels = levels(importantVars$hasShampoo))
+tester$hasAC <- factor(tester$hasAC, levels = levels(importantVars$hasAC))
+tester$hasDesk <- factor(tester$hasDesk, levels = levels(importantVars$hasDesk))
+tester$hasIron <- factor(tester$hasIron, levels = levels(importantVars$hasIron))
+tester$hasHairDryer <- factor(tester$hasHairDryer, levels = levels(importantVars$hasHairDryer))
+tester$hasKitchen <- factor(tester$hasKitchen, levels = levels(importantVars$hasKitchen))
+tester$isFamilyFriendly <- factor(tester$isFamilyFriendly, levels = levels(importantVars$isFamilyFriendly))
+tester$cluster <- factor(tester$cluster, levels = levels(importantVars$cluster))
+tester$propertyType <- factor(tester$propertyType, levels = levels(importantVars$propertyType))
+
+# predict
+predict(fullForest,tester)
+
 # getting variable ranges, etc. for R Shiny App user interface
 summary(importantVars$accommodates)
 table(importantVars$bedrooms)
 summary(importantVars$square_meter)
 summary(importantVars$bathrooms)
 summary(importantVars$beds)
+summary(importantVars$square_meter)
 
 #TODO: confidence intervals (+- error)
-
-# regression model
-plot(propertyPrice,IncomePerMonth)
-reg = lm(IncomePerMonth~propertyPrice)
-summary(reg)
-abline(reg, col = "red") # shows a fairly linear relationship between propety price and income per month 
+library(stargazer)
+stargazer(imp1, type = "html", out = "./impPlot.html")

@@ -2,12 +2,15 @@ library(shiny)
 #install.packages("shinythemes")
 library(shinythemes)
 library(leaflet)
+library(ggplot2)
+
 ui <- fluidPage(
+    title = "R-Stars R Shiny App",
     theme = shinytheme("united"),
-    
+
     titlePanel("Earn Money As An AirBnb Host in Paris"),
-    ### Side Bar Layout
     
+    ### Side Bar Layout
     sidebarLayout(
         # Side bar Panel
         sidebarPanel(
@@ -18,6 +21,11 @@ ui <- fluidPage(
                         label = "Select your listing type",
                         choices = c("Entire Apartment","Private Room","Shared Room")
             ),
+            
+            # isFamilyFriendly
+            checkboxInput(inputId = "fam", 
+                          label = "Is your place family friendly?", 
+                          value = FALSE),
             
             #zipcode
             selectInput(inputId = "zip",
@@ -65,7 +73,7 @@ ui <- fluidPage(
             
             # accomodates
             numericInput(inputId = "acc",
-                         label = "Accomodates",
+                         label = "How many guests can you accommodate?",
                          value = 2,
                          min = 1,
                          max = 12,
@@ -98,34 +106,59 @@ ui <- fluidPage(
                          step = 1
             ),
             
-            # isFamilyFriendly
-            checkboxInput(inputId = "fam", 
-                          label = "Is your place family friendly?", 
+            # amenities
+            helpText("Select your amenities below: "),
+            
+            # TV
+            checkboxInput(inputId = "tv", 
+                          label = "TV", 
+                          value = FALSE),
+            # Shampoo
+            checkboxInput(inputId = "sham", 
+                          label = "Shampoo", 
+                          value = FALSE),
+            # AC
+            checkboxInput(inputId = "ac", 
+                          label = "AC", 
+                          value = FALSE),
+            # Desk
+            checkboxInput(inputId = "desk", 
+                          label = "Desk/workspace", 
+                          value = FALSE),
+            # Iron
+            checkboxInput(inputId = "iron", 
+                          label = "Iron", 
+                          value = FALSE),
+            # Hairdryer
+            checkboxInput(inputId = "hair", 
+                          label = "Hair Dryer", 
+                          value = FALSE),
+            # Kitchen
+            checkboxInput(inputId = "kitch", 
+                          label = "Kitchen", 
                           value = FALSE),
             
-            # amenities 
-            checkboxGroupInput(inputId = "amen",
-                               label = "Select the amenities you will be including",
-                               choices = c("TV","Shampoo","AC","Desk","Iron","HairDryer","Kitchen"),
-                               inline = TRUE
-                               
-            ),
-            
-
-            
             #submitButton(text = "Calculate Monthly Income"),
-            actionButton("Enter", "Calculate Potential Earnings"),
+            tags$head(
+                tags$style(HTML('#Enter{background-color:orangered}'))
+            ),
+            actionButton("Enter", "Calculate Potential Earnings")
             
-            h2("Monthly Income: "),
-
-            textOutput("dynamicText")
+            #h2("Monthly Income: "),
             
+            #textOutput("dynamicText")
         ), # Panel Stops Here
+
         
         
         mainPanel(
-            leafletOutput("mymap",height = 750, width = 750)
+            h2("Map of Paris"),
+            h4("Districts are distinguished by colour"),
+            leafletOutput("mymap",height = 750, width = 750),
+            htmlOutput("dynamicText"),
+            plotOutput("plot")
         ),
         position = c("left")
     )
 )
+
