@@ -3,6 +3,8 @@ Our final project for MGSC 401 is to tackle an important question for today's to
 
 --> How much will my place make on Airbnb?
 
+>> Find out by using our interactive app made with R Shiny! 
+
 APP INSTRUCTIONS: 
   1. Download files: AirbnbForest.R, server.R, ui.R, Making-Graphs.R, FinalCleanedAirbnb.csv 
       1.1. Ensure all files are in the same directory
